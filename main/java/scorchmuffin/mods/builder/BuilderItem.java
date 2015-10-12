@@ -11,6 +11,7 @@ public class BuilderItem extends Item {
 
 	public static final String NAME = "BuildingBuilder";
 
+	
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
 			float hitX, float hitY, float hitZ) {
@@ -19,26 +20,27 @@ public class BuilderItem extends Item {
 		int maxY = y + 8;
 		int maxZ = z + 10;
 
-		for (int i = x; i < maxX; i++) {
-			for (int j = y; j < maxY; j++) {
+		for (int i = x; i <= maxX; i++) {
+			for (int j = y; j <= maxY; j++) {
 				world.setBlock(i, j, z, Blocks.cobblestone);
 				world.setBlock(i, j, maxZ, Blocks.cobblestone);
 			}
 		}
 
-		for (int j = y; j < maxY; j++) {
-			for (int k = z; k < maxZ; k++) {
+		for (int j = y; j <= maxY; j++) {
+			for (int k = z; k <= maxZ; k++) {
 				world.setBlock(x, j, k, Blocks.cobblestone);
 				world.setBlock(maxX, j, k, Blocks.cobblestone);
 			}
 		}
 
-		for (int i = x; i < maxX; i++) {
-			for (int k = z; k < maxZ; k++) {
+		for (int i = x; i <= maxX; i++) {
+			for (int k = z; k <= maxZ; k++) {
 				world.setBlock(i, y, k, getBlock(i, y, k));
 				world.setBlock(i, maxY, k, getBlock(i, y, k));
 			}
 		}
+		player.inventory.consumeInventoryItem(this);
 		return true;
 	}
 
