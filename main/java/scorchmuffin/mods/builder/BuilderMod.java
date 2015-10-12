@@ -1,12 +1,14 @@
 package scorchmuffin.mods.builder;
 
-import net.minecraft.init.Blocks;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 @Mod(modid = BuilderMod.MODID, version = BuilderMod.VERSION, name = BuilderMod.NAME)
 public class BuilderMod {
@@ -31,7 +33,7 @@ public class BuilderMod {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-
+		GameRegistry.addRecipe(new ItemStack(BUILDER_ITEM), new Object[]{"WWW", "WSW", "WWW", 'W', Blocks.planks, 'S', Items.stick});
 	}
 
 	@EventHandler
