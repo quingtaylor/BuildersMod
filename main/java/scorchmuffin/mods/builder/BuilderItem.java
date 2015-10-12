@@ -12,9 +12,8 @@ public class BuilderItem extends Item {
 	public static final String NAME = "BuildingBuilder";
 
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player,
-			World world, int x, int y, int z, int side, float hitX, float hitY,
-			float hitZ) {
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+			float hitX, float hitY, float hitZ) {
 
 		int maxX = x + 5;
 		int maxY = y + 8;
@@ -36,7 +35,7 @@ public class BuilderItem extends Item {
 
 		for (int i = x; i < maxX; i++) {
 			for (int k = z; k < maxZ; k++) {
-				world.setBlock(i, y, k, getBlock(i,y,k));
+				world.setBlock(i, y, k, getBlock(i, y, k));
 				world.setBlock(i, maxY, k, getBlock(i, y, k));
 			}
 		}

@@ -29,17 +29,17 @@ public class BuilderMod {
 		GameRegistry.registerItem(BUILDER_ITEM, BuilderItem.NAME);
 	}
 
-		@EventHandler
+	@EventHandler
 	public void init(FMLInitializationEvent event) {
 
 	}
-		@EventHandler
-		public void postInit(FMLPostInitializationEvent event) {
 
-			/*
-			 * Proxy, TileEntity, entity, GUI and Packet Registering
-			 */
-		}
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
 
+		/*
+		 * Proxy, TileEntity, entity, GUI and Packet Registering
+		 */
+	}
 
 }
