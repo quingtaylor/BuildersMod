@@ -28,7 +28,7 @@ public class BuilderItem extends Item {
 		int i = x;
 		int k = z;
 		for (int j = y; j <= maxY; j++) {
-			world.setBlock(i, j, k, Blocks.glowstone);
+			world.setBlock(i, j, k, Blocks.brick_block);
 			
 			if (j % 4 == 0) {
 				i++;
