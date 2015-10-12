@@ -48,7 +48,7 @@ public class BuilderItem extends Item {
 		if (x % 2 == 0)
 			return Blocks.cobblestone;
 		else
-			return Blocks.red_mushroom_block;
+			return Blocks.glowstone;
 	}
 
 }
