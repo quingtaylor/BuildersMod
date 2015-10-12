@@ -11,14 +11,13 @@ public class BuilderItem extends Item {
 
 	public static final String NAME = "BuildingBuilder";
 
-	
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player,
-			World world, int x, int y, int z, int side, float hitX, float hitY,
-			float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+			float hitX, float hitY, float hitZ) {
 
 		// buildSquare(world, x, y, z);
 		buildStairs(world, x, y, z);
+
 		player.inventory.consumeInventoryItem(this);
 		return true;
 	}
@@ -29,7 +28,7 @@ public class BuilderItem extends Item {
 		int k = z;
 		for (int j = y; j <= maxY; j++) {
 			world.setBlock(i, j, k, Blocks.brick_block);
-			
+
 			if (j % 4 == 0) {
 				i++;
 			} else if (j % 4 == 1) {
@@ -37,31 +36,31 @@ public class BuilderItem extends Item {
 			} else if (j % 4 == 2) {
 				i--;
 			} else if (j % 4 == 3) {
-				world.setBlock(i+1, j, k, Blocks.torch);
+				world.setBlock(i + 1, j, k, Blocks.torch);
 				k--;
 			}
-			if (j %34 == 0) {
-				world.setBlock(i+1, j+1, k, Blocks.lava);
+			if (j % 34 == 0) {
+				world.setBlock(i + 1, j + 1, k, Blocks.lava);
 			}
 		}
 	}
 
 	private void buildSquare(World world, int x, int y, int z) {
-		int maxX = x + 5;
-		int maxY = y + 8;
-		int maxZ = z + 10;
+		int maxX = x + 9;
+		int maxY = y + 15;
+		int maxZ = z + 9;
 
 		for (int i = x; i <= maxX; i++) {
 			for (int j = y; j <= maxY; j++) {
-				world.setBlock(i, j, z, Blocks.cobblestone);
-				world.setBlock(i, j, maxZ, Blocks.cobblestone);
+				world.setBlock(i, j, z, Blocks.stone);
+				world.setBlock(i, j, maxZ, Blocks.stone);
 			}
 		}
 
 		for (int j = y; j <= maxY; j++) {
 			for (int k = z; k <= maxZ; k++) {
-				world.setBlock(x, j, k, Blocks.cobblestone);
-				world.setBlock(maxX, j, k, Blocks.cobblestone);
+				world.setBlock(x, j, k, Blocks.stone);
+				world.setBlock(maxX, j, k, Blocks.stone);
 			}
 		}
 
@@ -74,8 +73,10 @@ public class BuilderItem extends Item {
 	}
 
 	private Block getBlock(int x, int y, int z) {
-		if (x % 2 == 0)
-			return Blocks.cobblestone;
+		if (x % 42 == 0)
+			return Blocks.water;
+		else if (x % 2 == 0)
+			return Blocks.stone;
 		else
 			return Blocks.glowstone;
 	}

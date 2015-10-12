@@ -33,7 +33,8 @@ public class BuilderMod {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		GameRegistry.addRecipe(new ItemStack(BUILDER_ITEM), new Object[]{"WWW", "WSW", "WWW", 'W', Blocks.planks, 'S', Items.stick});
+		GameRegistry.addRecipe(new ItemStack(BUILDER_ITEM),
+				new Object[] { "WWW", "WSW", "WWW", 'W', Blocks.planks, 'S', Items.stick });
 	}
 
 	@EventHandler
