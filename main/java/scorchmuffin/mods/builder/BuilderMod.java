@@ -6,8 +6,10 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 @Mod(modid = BuilderMod.MODID, version = BuilderMod.VERSION, name = BuilderMod.NAME)
@@ -27,7 +29,7 @@ public class BuilderMod {
 		/*
 		 * Item/Block init and registering, plus Config handling
 		 */
-		BUILDER_ITEM.setUnlocalizedName(BuilderItem.NAME);
+		BUILDER_ITEM.setUnlocalizedName(BuilderItem.NAME).setCreativeTab(tabBuildermod);
 		GameRegistry.registerItem(BUILDER_ITEM, BuilderItem.NAME);
 	}
 
@@ -45,4 +47,10 @@ public class BuilderMod {
 		 */
 	}
 
+	public static CreativeTabs tabBuildermod = new CreativeTabs("tabBuildermod") {
+		@Override
+		public Item getTabIconItem() {
+			return new ItemStack(BUILDER_ITEM).getItem();
+		}
+	};
 }

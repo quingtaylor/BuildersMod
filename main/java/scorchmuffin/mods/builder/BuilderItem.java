@@ -23,7 +23,7 @@ public class BuilderItem extends Item {
 	}
 
 	private void buildStairs(World world, int x, int y, int z) {
-		int maxY = y + 50;
+		int maxY = y + 100;
 		int i = x;
 		int k = z;
 		for (int j = y; j <= maxY; j++) {
@@ -39,8 +39,11 @@ public class BuilderItem extends Item {
 				world.setBlock(i + 1, j, k, Blocks.torch);
 				k--;
 			}
-			if (j % 34 == 0) {
+			if (j % 36 == 0) {
 				world.setBlock(i + 1, j + 1, k, Blocks.lava);
+			}
+			if (j % 42 == 0) {
+				world.setBlock(i + 1, j+1, k, Blocks.water);
 			}
 		}
 	}
