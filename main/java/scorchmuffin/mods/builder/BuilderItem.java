@@ -43,7 +43,7 @@ public class BuilderItem extends Item {
 				world.setBlock(i + 1, j + 1, k, Blocks.lava);
 			}
 			if (j % 42 == 0) {
-				world.setBlock(i + 1, j+1, k, Blocks.water);
+				world.setBlock(i + 1, j + 1, k, Blocks.water);
 			}
 		}
 	}
@@ -76,8 +76,8 @@ public class BuilderItem extends Item {
 	}
 
 	private Block getBlock(int x, int y, int z) {
-		if (x % 42 == 0)
-			return Blocks.water;
+		if (x % 5 == 0)
+			return Blocks.diamond_block;
 		else if (x % 2 == 0)
 			return Blocks.stone;
 		else
