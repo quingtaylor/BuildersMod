@@ -4,12 +4,16 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
-public class Wall {
+public abstract class Wall {
 
-	private int currentX;
+	public enum Axis {
+		AXIS_X, AXIS_Y, AXIS_Z
+	};
+
+	private int currentHoriz;
 	private int currentY;
-	private int currentZ;
-	private int initialX;
+	private int currentConstPlane;
+	private int initialHoriz;
 	private int initialY;
 	private int initialZ;
 	private int height;
@@ -17,37 +21,42 @@ public class Wall {
 
 	private int windowWidth;
 	private int sectionHeight;
-	private int maxX;
+	private int maxHoriz;
 	private int maxY;
 	private int spacerWidth;
 
 	private boolean includeDoor;
+	private boolean includeWindow;
 	private Block windowBlock;
 	private Block baseBlock;
 	private Block columnBlock;
+	private Block insideColumnBlock;
 	private Block wallBlock;
 	private World world;
+	private Axis axis;
 
-	public Wall(World world, int x, int y, int z) {
-		this.initialX = x;
-		this.initialY = y;
-		this.initialZ = z;
-		this.currentX = x;
-		this.currentY = y;
-		this.currentZ = z;
+	protected Wall(int horiz, int vert, int constPlane, World world, Axis axis) {
+		this.initialHoriz = horiz;
+		this.initialY = vert;
+		this.currentHoriz = horiz;
+		this.currentY = vert;
+		this.currentConstPlane = constPlane;
 		this.world = world;
 		windowBlock = Blocks.glass;
 		baseBlock = Blocks.brick_block;
 		columnBlock = Blocks.log;
-		wallBlock = Blocks.stonebrick;
+		insideColumnBlock = Blocks.stonebrick;
+//		wallBlock = Blocks.stonebrick;
+		wallBlock = Blocks.air;
 		spacerWidth = 2;
+		this.axis = axis;
 	}
 
-	public void setSize(int height, int width) {
+	public void setSize(int width, int height) {
 		this.height = height;
 		this.width = width;
 
-		this.maxX = initialX + width;
+		this.maxHoriz = initialHoriz + width;
 		this.maxY = initialY + height;
 
 		if (height > 3)
@@ -69,79 +78,109 @@ public class Wall {
 		this.includeDoor = door;
 	}
 
+	public void setIncludeWindow(boolean includeWindow) {
+		this.includeWindow = includeWindow;
+	}
+
 	public void build() {
 
 		// first row is the base (above the floor)
-		buildBaseRow();
-		prepareForNextRow(1);
+		// buildBaseRow();
+		// prepareForNextRow(1);
 
 		// windows and doors, these are the middle parts of the wall
 		while (currentY < maxY - 1) {
-			buildColumn();
-			while (currentX + windowWidth + spacerWidth < maxX) {
-				buildWindow();
-				buildWindowSpacer();
+			buildOutsideColumn();
+			buildInsideColumn();
+			if (includeWindow) {
+				while (currentHoriz + windowWidth + spacerWidth < maxHoriz) {
+					buildWindow();
+					buildWindowSpacer();
+				}
 			}
 			buildRemainder(world);
-			buildColumn();
+			buildInsideColumn();
+			buildOutsideColumn();
 			prepareForNextRow(sectionHeight);
 		}
 		buildBaseRow();
 	}
 
-	private void buildColumn() {
+	private void setBlock(int horiz, int vert, Block block) {
+		if (axis == Axis.AXIS_X)
+			world.setBlock(horiz, vert, currentConstPlane, block);
+		else if (axis == Axis.AXIS_Z)
+			world.setBlock(currentConstPlane, vert, horiz, block);
+		else
+			world.setBlock(horiz, currentConstPlane, vert, block);
+	}
+
+	private void buildOutsideColumn() {
 		for (int j = 0; j < sectionHeight; j++) {
-			world.setBlock(currentX, currentY + j, currentZ, columnBlock);
+			setBlock(currentHoriz, currentY + j, columnBlock);
 		}
-		currentX++;
+		currentHoriz++;
+	}
+
+	private void buildInsideColumn() {
+		for (int j = 0; j < sectionHeight; j++) {
+			setBlock(currentHoriz, currentY + j, insideColumnBlock);
+		}
+		currentHoriz++;
 	}
 
 	private void buildBaseRow() {
-		while (currentX < maxX) {
-			world.setBlock(currentX, currentY, currentZ, baseBlock);
-			currentX++;
+		while (currentHoriz <= maxHoriz) {
+			setBlock(currentHoriz, currentY, baseBlock);
+			currentHoriz++;
 		}
 	}
 
 	private void buildWindow() {
-		if (currentX + windowWidth >= maxX)
+		if (currentHoriz + windowWidth >= maxHoriz)
 			return;
 		int i;
+
 		for (i = 0; i < windowWidth; i++) {
 			for (int j = 0; j < sectionHeight; j++) {
-				world.setBlock(i + currentX, j + currentY, currentZ, windowBlock);
+				if (i == 0 || i + 1 == windowWidth || j == 0
+						|| j + 1 == sectionHeight)
+					setBlock(i + currentHoriz, j + currentY, Blocks.coal_block);
+				else
+					setBlock(i + currentHoriz, j + currentY, windowBlock);
 			}
 		}
-		currentX = currentX + i;
+		currentHoriz = currentHoriz + i;
 	}
-	
+
 	private void buildWindowSpacer() {
-		if (currentX + windowWidth >= maxX)
+		if (currentHoriz + windowWidth >= maxHoriz)
 			return;
 		int i;
 		for (i = 0; i < spacerWidth; i++) {
 			for (int j = 0; j < sectionHeight; j++) {
-				world.setBlock(i + currentX, j + currentY, currentZ, wallBlock);
+				setBlock(i + currentHoriz, j + currentY, wallBlock);
 			}
 		}
-		currentX = currentX + i;
+		currentHoriz = currentHoriz + i;
 	}
 
 	/*
-	 * Build what is left after a section is built, from where we are to the end of the width
+	 * Build what is left after a section is built, from where we are to the end
+	 * of the width
 	 */
 	private void buildRemainder(World world) {
 		int i;
-		for (i = currentX; i < maxX; i++) {
+		for (i = currentHoriz; i <= maxHoriz - 2; i++) {
 			for (int j = 0; j < sectionHeight; j++) {
-				world.setBlock(i + currentX, j + currentY, currentZ, wallBlock);
+				setBlock(i, j + currentY, wallBlock);
 			}
 		}
-		currentX = i;
+		currentHoriz = i;
 	}
 
 	private void prepareForNextRow(int sectionHeight) {
 		currentY = currentY + sectionHeight;
-		currentX = initialX;
+		currentHoriz = initialHoriz;
 	}
 }

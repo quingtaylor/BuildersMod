@@ -1,6 +1,8 @@
 package scorchmuffin.mods.builder;
 
-import scorchmuffin.mods.builder.parts.Wall;
+import scorchmuffin.mods.builder.parts.Floor;
+import scorchmuffin.mods.builder.parts.WallX;
+import scorchmuffin.mods.builder.parts.WallZ;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -18,15 +20,35 @@ public class BuilderItem extends Item {
 
 		// buildSquare(world, x, y, z);
 		// buildStairs(world, x, y, z);
-		Wall l = new Wall(world, x, y, z);
-		l.setSize(10, 50);
-		l.build();
-		Wall r = new Wall(world, x, y, z + 50);
-		r.setSize(10, 50);
-		r.build();
+		int height = 6;
+		int widthX = 10;
+		int widthZ = 15;
+		buildRoom(x, y, z, height, widthX, widthZ, world);
+		buildRoom(x + widthX + 1, y, z, height+2, widthX+5, widthZ+3, world);
 
 		player.inventory.consumeInventoryItem(this);
 		return true;
+	}
+
+
+	private void buildRoom(int x, int y, int z, int height, int widthX,
+			int widthZ, World world) {
+		Floor floor = new Floor(x, y, z, world);
+		floor.setSize(widthX, widthZ);
+		floor.build();
+		
+		WallX l = new WallX(x, y+1, z, world);
+		l.setSize(widthX, height);
+		l.build();
+		WallX r = new WallX(x, y+1, z + widthZ, world);
+		r.setSize(widthX, height);
+		r.build();
+		WallZ f = new WallZ(x, y+1, z, world);
+		f.setSize(widthZ, height);
+		f.build();
+		WallZ b = new WallZ(x + widthX, y+1, z, world);
+		b.setSize(widthZ, height);
+		b.build();
 	}
 	
 
