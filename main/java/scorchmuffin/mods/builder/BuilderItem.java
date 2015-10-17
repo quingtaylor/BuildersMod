@@ -1,5 +1,6 @@
 package scorchmuffin.mods.builder;
 
+import scorchmuffin.mods.builder.parts.Wall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -16,11 +17,18 @@ public class BuilderItem extends Item {
 			float hitX, float hitY, float hitZ) {
 
 		// buildSquare(world, x, y, z);
-		buildStairs(world, x, y, z);
+		// buildStairs(world, x, y, z);
+		Wall l = new Wall(world, x, y, z);
+		l.setSize(10, 50);
+		l.build();
+		Wall r = new Wall(world, x, y, z + 50);
+		r.setSize(10, 50);
+		r.build();
 
 		player.inventory.consumeInventoryItem(this);
 		return true;
 	}
+	
 
 	private void buildStairs(World world, int x, int y, int z) {
 		int maxY = y + 100;
