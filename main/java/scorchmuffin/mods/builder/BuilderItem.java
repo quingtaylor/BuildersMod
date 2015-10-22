@@ -1,6 +1,8 @@
 package scorchmuffin.mods.builder;
 
 import scorchmuffin.mods.builder.parts.Floor;
+import scorchmuffin.mods.builder.parts.Room;
+import scorchmuffin.mods.builder.parts.Space;
 import scorchmuffin.mods.builder.parts.WallX;
 import scorchmuffin.mods.builder.parts.WallZ;
 import net.minecraft.block.Block;
@@ -15,42 +17,52 @@ public class BuilderItem extends Item {
 	public static final String NAME = "BuildingBuilder";
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
-			float hitX, float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
+			int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 
 		// buildSquare(world, x, y, z);
 		// buildStairs(world, x, y, z);
+		foo(world, x, y, z, ScorchUtils.getPlayerDirection(player));
+		player.inventory.consumeInventoryItem(this);
+		return true;
+
+	}
+
+	private void foo(World world, int x, int y, int z,
+			ScorchUtils.Direction direction) {
 		int height = 6;
 		int widthX = 10;
 		int widthZ = 15;
-		buildRoom(x, y, z, height, widthX, widthZ, world);
-		buildRoom(x + widthX + 1, y, z, height+2, widthX+5, widthZ+3, world);
+		switch (direction) {
+		case NORTH:
+			buildRoom(x, y, z, height, widthX, widthZ, world, direction);
+			buildRoom(x + widthX, y, z, height + 2, widthX + 5, widthZ + 3, world, direction);
 
-		player.inventory.consumeInventoryItem(this);
-		return true;
+			break;
+		case EAST:
+			buildRoom(x, y, z, height, widthZ, widthX, world, direction);
+			buildRoom(x, y, z + widthX, height + 2, widthZ + 3, widthX + 5, world, direction);
+			break;
+		case SOUTH:
+			buildRoom(x, y, z, height, widthX, widthZ, world, direction);
+			buildRoom(x - widthX, y, z, height + 2, widthX + 5, widthZ + 3, world, direction);
+			break;
+		case WEST:
+			buildRoom(x, y, z, height, widthZ, widthX, world, direction);
+			buildRoom(x, y, z - widthX, height + 2, widthZ + 3, widthX + 5, world, direction);
+			break;
+
+		default:
+			break;
+		}
 	}
-
 
 	private void buildRoom(int x, int y, int z, int height, int widthX,
-			int widthZ, World world) {
-		Floor floor = new Floor(x, y, z, world);
-		floor.setSize(widthX, widthZ);
-		floor.build();
-		
-		WallX l = new WallX(x, y+1, z, world);
-		l.setSize(widthX, height);
-		l.build();
-		WallX r = new WallX(x, y+1, z + widthZ, world);
-		r.setSize(widthX, height);
+			int widthZ, World world, ScorchUtils.Direction direction) {
+		Room r = new Room(x, y, z, world, direction);
+		r.setSize(widthX, height, widthZ);
 		r.build();
-		WallZ f = new WallZ(x, y+1, z, world);
-		f.setSize(widthZ, height);
-		f.build();
-		WallZ b = new WallZ(x + widthX, y+1, z, world);
-		b.setSize(widthZ, height);
-		b.build();
 	}
-	
 
 	private void buildStairs(World world, int x, int y, int z) {
 		int maxY = y + 100;
