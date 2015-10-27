@@ -1,5 +1,6 @@
 package scorchmuffin.mods.builder.parts;
 
+import scorchmuffin.mods.builder.ScorchUtils.Direction;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -11,15 +12,17 @@ public class Floor {
 	private int length;
 	private int width;
 	private Block floorBlock;
-	private boolean positive;
+	private Direction direction;
+	private BuilderUtils builder;
 
-	public Floor(int x, int y, int z, World world, boolean positive) {
+	public Floor(int x, int y, int z, World world, Direction direction) {
+		builder = new BuilderUtils(x, y, z, world, direction);
 		currentX = x;
 		currentY = y;
 		currentZ = z;
 		this.world = world;
 		floorBlock = Blocks.crafting_table;
-		this.positive = positive;
+		this.direction = direction;
 	}
 
 	public void setBlock(Block floorBlock) {
@@ -35,10 +38,7 @@ public class Floor {
 		
 		for (int x = 0; x < width; x++) {
 			for (int z = 0; z < length; z++) {
-				if (positive)
-					world.setBlock(currentX + x, currentY, currentZ + z, floorBlock);
-				else
-					world.setBlock(currentX - x, currentY, currentZ - z, floorBlock);
+				builder.build(x, 0, z, floorBlock);
 			}
 		}
 	}

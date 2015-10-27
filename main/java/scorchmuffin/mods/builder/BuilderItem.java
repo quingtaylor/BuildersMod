@@ -30,26 +30,26 @@ public class BuilderItem extends Item {
 
 	private void foo(World world, int x, int y, int z,
 			ScorchUtils.Direction direction) {
-		int height = 6;
-		int widthX = 10;
-		int widthZ = 15;
+		int height = 9;
+		int widthX = 9;
+		int widthZ = 9;
 		switch (direction) {
 		case NORTH:
 			buildRoom(x, y, z, height, widthX, widthZ, world, direction);
-			buildRoom(x + widthX, y, z, height + 2, widthX + 5, widthZ + 3, world, direction);
+			//buildRoom(x + widthX, y, z, height + 2, widthX + 5, widthZ + 3, world, direction);
 
 			break;
 		case EAST:
 			buildRoom(x, y, z, height, widthZ, widthX, world, direction);
-			buildRoom(x, y, z + widthX, height + 2, widthZ + 3, widthX + 5, world, direction);
+			//buildRoom(x, y, z + widthX, height + 2, widthZ + 3, widthX + 5, world, direction);
 			break;
 		case SOUTH:
 			buildRoom(x, y, z, height, widthX, widthZ, world, direction);
-			buildRoom(x - widthX, y, z, height + 2, widthX + 5, widthZ + 3, world, direction);
+			//buildRoom(x - widthX, y, z, height + 2, widthX + 5, widthZ + 3, world, direction);
 			break;
 		case WEST:
 			buildRoom(x, y, z, height, widthZ, widthX, world, direction);
-			buildRoom(x, y, z - widthX, height + 2, widthZ + 3, widthX + 5, world, direction);
+			//buildRoom(x, y, z - widthX, height + 2, widthZ + 3, widthX + 5, world, direction);
 			break;
 
 		default:

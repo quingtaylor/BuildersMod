@@ -1,5 +1,6 @@
 package scorchmuffin.mods.builder.parts;
 
+import scorchmuffin.mods.builder.ScorchUtils.Direction;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -7,7 +8,7 @@ import net.minecraft.world.World;
 public abstract class Wall {
 
 	public enum Axis {
-		AXIS_X, AXIS_M_X, AXIS_Z, AXIS_M_Z
+		AXIS_X, AXIS_Z
 	};
 
 	private int currentHoriz;
@@ -18,6 +19,7 @@ public abstract class Wall {
 	private int initialZ;
 	private int height;
 	private int width;
+	private int effWidth;
 
 	private int windowWidth;
 	private int sectionHeight;
@@ -34,8 +36,9 @@ public abstract class Wall {
 	private Axis axis;
 	private int vert;
 	private int horiz;
+	private BuilderUtils builder;
 
-	protected Wall(int horiz, int vert, int constPlane, World world, Axis axis) {
+	protected Wall(int horiz, int vert, int constPlane, World world, Axis axis, BuilderUtils builder) {
 		this.initialHoriz = horiz;
 		this.initialY = vert;
 		this.horiz = horiz;
@@ -52,6 +55,7 @@ public abstract class Wall {
 		// wallBlock = Blocks.air;
 		spacerWidth = 1;
 		this.axis = axis;
+		this.builder = builder;
 	}
 
 	public void setSize(int width, int height) {
@@ -61,12 +65,18 @@ public abstract class Wall {
 		// equation includes the current position (x is 4, width is 3, final x
 		// will be 6 (block at 4, 5 and 6)
 		// max cannot ever be achieved, all values must be kept less than max
-		if ((int)Math.floor(height / 4) >= 2) {
+		if ((int)Math.floor(height / 5) >= 2) {
+			sectionHeight = 5;
+			windowWidth = 5;
+		} else if ((int)Math.floor(height / 4) >= 2) {
+			sectionHeight = 4;
+			windowWidth = 4;
+		} else if (height > 4) {
 			sectionHeight = 4;
 			windowWidth = 4;
 		} else {
-			sectionHeight = height;
-			windowWidth = height;
+			sectionHeight = 3;
+			windowWidth = 3;
 		}
 	}
 
@@ -80,22 +90,26 @@ public abstract class Wall {
 
 	public void build() {
 
-		// first row is the base (above the floor)
-		// buildBaseRow();
-		// prepareForNextRow(1);
+		// effective width is width - 2, since we have outside columns
+		effWidth = width - 2;
+		int sectionWidth = windowWidth + (2 * spacerWidth);
+		int numSections = (int) Math.floor(effWidth / sectionWidth);
+		int remainder = effWidth - (sectionWidth * numSections);
+		int lRemainder = (int) Math.floor(remainder / 2);
+		int rRemainder = remainder - lRemainder;
 
 		// windows and doors, these are the middle parts of the wall
 		while (currentY + sectionHeight <= height) {
 			buildOutsideColumn();
-			buildInsideColumn();
+			buildCol(lRemainder, wallBlock);
 			if (includeWindow) {
-				while (currentHoriz + windowWidth < width) {
+				for (int i = 0; i< numSections; i++) {
+					buildWindowSpacer();
 					buildWindow();
 					buildWindowSpacer();
 				}
 			}
-			buildRemainder();
-			buildInsideColumn();
+			buildCol(rRemainder, wallBlock);
 			buildOutsideColumn();
 			prepareForNextRow(sectionHeight);
 		}
@@ -105,18 +119,22 @@ public abstract class Wall {
 			prepareForNextRow(1);
 		}
 	}
+	
+	private void buildCol(int width, Block b) {
+		int i;
+		for (i = 0; i < width; i++) {
+			for (int j = 0; j < sectionHeight; j++) {
+				setBlock(i + currentHoriz, j + currentY, b);
+			}
+		}
+		currentHoriz = currentHoriz + i;
+	}
 
 	private void setBlock(int horiz, int vert, Block block) {
 		if (axis == Axis.AXIS_X)
-			world.setBlock(this.horiz + horiz, this.vert + vert, currentConstPlane, block);
-		else if (axis == Axis.AXIS_M_X)
-			world.setBlock(this.horiz - horiz, this.vert + vert, currentConstPlane, block);
+			builder.build(horiz, vert, 0, block);
 		else if (axis == Axis.AXIS_Z)
-			world.setBlock(currentConstPlane, this.vert + vert, this.horiz + horiz, block);
-		else if (axis == Axis.AXIS_M_Z)
-			world.setBlock(currentConstPlane, this.vert + vert, this.horiz - horiz, block);
-		else
-			world.setBlock(horiz, currentConstPlane, vert, block);
+			builder.build(0, vert, horiz, block);
 	}
 
 	private void buildOutsideColumn() {
@@ -126,18 +144,13 @@ public abstract class Wall {
 		currentHoriz++;
 	}
 
-	private void buildInsideColumn() {
-		for (int j = 0; j < sectionHeight; j++) {
-			setBlock(currentHoriz, currentY + j, insideColumnBlock);
-		}
-		currentHoriz++;
-	}
-
 	private void buildBaseRow() {
-		while (currentHoriz < width) {
+		setBlock(currentHoriz++, currentY, columnBlock);
+		while (currentHoriz < width -1 ) {
 			setBlock(currentHoriz, currentY, baseBlock);
 			currentHoriz++;
 		}
+		setBlock(currentHoriz++, currentY, columnBlock);
 	}
 
 	private void buildWindow() {
@@ -167,20 +180,6 @@ public abstract class Wall {
 			}
 		}
 		currentHoriz = currentHoriz + i;
-	}
-
-	/*
-	 * Build what is left after a section is built, from where we are to the end
-	 * of the width, minus the inside column and outside column
-	 */
-	private void buildRemainder() {
-		int i;
-		for (i = currentHoriz; i < width - 2; i++) {
-			for (int j = 0; j < sectionHeight; j++) {
-				setBlock(i, j + currentY, wallBlock);
-			}
-		}
-		currentHoriz = i;
 	}
 
 	private void prepareForNextRow(int sectionHeight) {

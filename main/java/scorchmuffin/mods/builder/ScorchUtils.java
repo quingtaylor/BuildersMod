@@ -39,14 +39,13 @@ public class ScorchUtils {
 				.floor_double((double) (p.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 		switch (var24) {
 		case 0:
-			return Direction.NORTH;
-		case 1:
-			return Direction.EAST;
-		case 2:
 			return Direction.SOUTH;
-		case 3:
+		case 1:
 			return Direction.WEST;
-
+		case 2:
+			return Direction.NORTH;
+		case 3:
+			return Direction.EAST;
 		default:
 			return Direction.NORTH;
 		}
