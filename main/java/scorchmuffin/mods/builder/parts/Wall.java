@@ -7,6 +7,9 @@ import net.minecraft.world.World;
 
 public abstract class Wall {
 
+	/*
+	 * Axis is X or Z
+	 */
 	public enum Axis {
 		AXIS_X, AXIS_Z
 	};
